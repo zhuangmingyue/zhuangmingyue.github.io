@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>小九 · 线框草案（含A/B配色）</title>
+<style>
+  /* ============ 主题变量：A 天空蓝+粉（活泼） / B 雾蓝+湛蓝（沉稳信任） ============ */
+  :root{
+    --hero-top:#A0D4EE; --hero-low:#DDEEF8; --cloud:#DDEEF8;
+    --accent:#E60067; --accent-deep:#C4004F;
+    --ink:#0A0C10; --ink-soft:#33383F;
+    --paper:#FFFFFF; --chip:#C1E5F8; --chip-ink:#12314A;
+    --wave:#FFFFFF;
+  }
+  html[data-theme="B"]{
+    --hero-top:#CFE0EF; --hero-low:#EDF3F9; --cloud:#EDF3F9;
+    --accent:#1D5DBF; --accent-deep:#14408A;
+    --ink:#16233A; --ink-soft:#3B475C;
+    --paper:#FFFFFF; --chip:#DCE7F2; --chip-ink:#1B3355;
+    --wave:#FFFFFF;
+  }
+  html[data-theme="C"]{
+    --hero-top:#FFD9A8; --hero-low:#FFF3E2; --cloud:#FFF3E2;
+    --accent:#E85D04; --accent-deep:#B54708;
+    --ink:#3D2B1F; --ink-soft:#6A5344;
+    --paper:#FFFFFF; --chip:#FFE3C2; --chip-ink:#5C3A1E;
+    --wave:#FFFFFF;
+  }
+  html[data-theme="D"]{
+    --hero-top:#CBE7D4; --hero-low:#EAF5EE; --cloud:#EAF5EE;
+    --accent:#0F8A5F; --accent-deep:#0B6B49;
+    --ink:#1B3024; --ink-soft:#4A5E52;
+    --paper:#FFFFFF; --chip:#D3EADD; --chip-ink:#1E4433;
+    --wave:#FFFFFF;
+  }
+  html[data-theme="E"]{
+    --hero-top:#DCD7F2; --hero-low:#F0EEFA; --cloud:#F0EEFA;
+    --accent:#6C3EE8; --accent-deep:#5029B8;
+    --ink:#241D3E; --ink-soft:#544B73;
+    --paper:#FFFFFF; --chip:#E3DEF6; --chip-ink:#33295C;
+    --wave:#FFFFFF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    background:var(--paper); color:var(--ink);
+    line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  /* 顶部极简导航 */
+  nav{
+    position:sticky;top:0;z-index:10;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 22px;
+    background:color-mix(in srgb, var(--hero-top) 82%, transparent);
+    backdrop-filter:blur(8px);
+  }
+  nav .logo{font-weight:800;font-size:18px;color:var(--accent);letter-spacing:.02em}
+  nav .navcta{
+    font-size:13px;font-weight:700;color:#fff;background:var(--accent);
+    padding:7px 16px;border-radius:999px;text-decoration:none;
+  }
+  /* 主题切换 */
+  .theme-toggle{
+    position:fixed;right:14px;bottom:18px;z-index:20;
+    display:flex;align-items:center;gap:0;
+    background:#fff;border-radius:999px;box-shadow:0 4px 18px rgba(10,12,16,.18);
+    font-size:12px;font-weight:700;overflow:hidden;
+  }
+  .theme-toggle button{
+    border:0;background:transparent;padding:9px 9px;cursor:pointer;color:var(--ink);font-size:11.5px;
+  }
+  .theme-toggle button.on{background:var(--ink);color:#fff}
+  /* Hero */
+  header{
+    background:linear-gradient(180deg,var(--hero-top) 0%,var(--hero-low) 78%,var(--cloud) 100%);
+    text-align:center;padding:64px 26px 110px;position:relative;
+  }
+  .eyebrow{
+    font-size:12px;font-weight:800;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:16px;
+  }
+  header h1{font-size:30px;line-height:1.42;font-weight:800;letter-spacing:.01em}
+  header .sub{margin-top:18px;font-size:15px;color:var(--ink-soft)}
+  header .hero-cta{
+    display:inline-block;margin-top:26px;font-size:15px;font-weight:700;
+    color:#fff;background:var(--accent);border-radius:999px;padding:13px 34px;
+    text-decoration:none;box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 40%,transparent);
+  }
+  .hero-figure{
+    margin:26px auto 0;width:132px;height:132px;border-radius:50%;
+    object-fit:cover;object-position:50% 22%;
+    border:4px solid rgba(255,255,255,.85);
+    box-shadow:0 10px 28px color-mix(in srgb,var(--accent-deep) 22%,transparent);
+    display:block;
+  }
+  /* 自绘云朵波浪过渡（重新绘制，非引用素材） */
+  .wave{display:block;width:100%;height:auto;margin-bottom:-1px}
+  main{background:var(--paper)}
+  section{padding:58px 24px 12px;max-width:680px;margin:0 auto}
+  section.tight{padding-bottom:58px}
+  /* eyebrow + 大标题 的重复节奏 */
+  .sec-title{font-size:24px;font-weight:800;line-height:1.4;margin-bottom:22px}
+  .lede{font-size:15px;color:var(--ink-soft);margin-bottom:24px}
+  /* 数据横滑卡 */
+  .stats{
+    display:flex;gap:14px;overflow-x:auto;padding:4px 24px 30px;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;max-width:728px;margin:0 auto;
+  }
+  .stat{
+    flex:0 0 62%;scroll-snap-align:center;
+    background:var(--chip);border-radius:22px;padding:24px 22px;
+  }
+  .stat .num{font-size:30px;font-weight:800;color:var(--accent-deep);line-height:1.2}
+  .stat .cap{font-size:13px;color:var(--chip-ink);margin-top:8px}
+  /* 战役故事卡 */
+  .story{
+    border-radius:22px;padding:26px 22px;margin-bottom:26px;
+    background:color-mix(in srgb,var(--chip) 34%,#fff);
+  }
+  .story h3{font-size:19px;font-weight:800;margin:10px 0 14px}
+  .story p{font-size:14.5px;color:var(--ink-soft);margin-bottom:10px}
+  .story .arrow{font-size:13px;color:var(--ink-soft)}
+  .story .arrow b{color:var(--ink)}
+  /* 能力胶囊 */
+  .caps{display:flex;flex-wrap:wrap;gap:12px}
+  .cap-pill{
+    background:var(--chip);color:var(--chip-ink);border-radius:999px;
+    padding:10px 18px;font-size:14px;font-weight:600;
+  }
+  /* 场景列表 */
+  .scene{
+    display:flex;gap:14px;align-items:flex-start;
+    padding:16px 0;border-bottom:1px solid color-mix(in srgb,var(--ink) 8%,transparent);
+  }
+  .scene:last-child{border-bottom:0}
+  .scene .dot{
+    flex:0 0 auto;width:10px;height:10px;border-radius:50%;
+    background:var(--accent);margin-top:9px;
+  }
+  .scene p{font-size:15px}
+  /* 他评引语 */
+  .quote{
+    font-size:17px;font-weight:700;text-align:center;
+    padding:26px 10px;color:var(--ink);
+  }
+  .quote span{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-top:10px;letter-spacing:.1em}
+  /* 时间线 */
+  .tl{padding-left:22px;border-left:3px solid var(--chip)}
+  .tl-item{position:relative;padding-bottom:24px}
+  .tl-item::before{
+    content:"";position:absolute;left:-29.5px;top:6px;width:11px;height:11px;
+    border-radius:50%;background:var(--accent);border:2.5px solid var(--paper);
+  }
+  .tl-item .when{font-size:12px;font-weight:800;color:var(--accent-deep);letter-spacing:.06em}
+  .tl-item .what{font-size:15px;margin-top:2px}
+  /* 联系区 */
+  .contact{
+    margin:24px auto 0;max-width:680px;padding:58px 24px 30px;
+    background:linear-gradient(180deg,var(--cloud),var(--paper));
+  }
+  .contact-btn{
+    display:block;text-align:center;text-decoration:none;
+    font-size:16px;font-weight:800;color:#fff;background:var(--accent);
+    border-radius:16px;padding:17px 20px;margin:0 0 14px;
+    box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 35%,transparent);
+  }
+  .contact-btn.ghost{
+    background:transparent;color:var(--accent-deep);
+    border:2px solid color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:none;
+  }
+  /* 待确认徽章 */
+  .tbd{
+    display:inline-block;font-size:11px;font-weight:700;line-height:1;
+    color:#8A5B00;background:#FFF3D6;border:1px solid #E8C979;
+    border-radius:6px;padding:4px 7px;margin-left:8px;vertical-align:2px;white-space:nowrap;
+  }
+  footer{
+    max-width:680px;margin:0 auto;padding:26px 24px calc(46px + env(safe-area-inset-bottom));
+    font-size:11.5px;color:color-mix(in srgb,var(--ink-soft) 80%,transparent);line-height:1.8;
+  }
+</style>
+</head>
+<body data-theme="A">
+
+<nav>
+  <div class="logo">小九</div>
+  <a class="navcta" href="#contact">联系我</a>
+</nav>
+
+<header>
+  <div class="eyebrow">运营主管 · 壹心理朝阳计划</div>
+  <h1>陪着队伍把事扛成的人<br>——朝阳计划从0到1，我扛了三年<span class="tbd">灵魂句A/B/C待选</span></h1>
+  <div class="sub">心理咨询师培养项目统筹推进 · 项目主管/负责人候选人</div>
+  <img class="hero-figure" src="assets/avatar-web.jpg" alt="小九的个人照片">
+  <a class="hero-cta" href="#contact">加我微信，聊聊</a>
+</header>
+
+<!-- 自绘波浪（版式学习，重新绘制） -->
+<svg class="wave" viewBox="0 0 680 90" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,52 C90,86 170,10 260,30 C350,50 420,88 510,66 C580,50 640,20 680,34 L680,90 L0,90 Z" fill="#FFFFFF"/>
+  <path d="M0,64 C110,92 210,26 320,44 C430,62 520,90 680,48 L680,90 L0,90 Z" fill="#FFFFFF" opacity="0"/>
+</svg>
+
+<main>
+  <!-- 数据带 -->
+  <div class="eyebrow" style="text-align:center;padding-top:6px">数字会说话</div>
+  <div class="stats">
+    <div class="stat"><div class="num">3200万</div><div class="cap">2025年全年流水营收<span class="tbd">需公司披露确认</span></div></div>
+    <div class="stat"><div class="num">2022.10</div><div class="cap">朝阳计划从0到1起步搭建</div></div>
+    <div class="stat"><div class="num">几万 → 80万</div><div class="cap">公众号单月流水跃迁（元/月）<span class="tbd">口径待钉</span></div></div>
+    <div class="stat"><div class="num">周1 → 周7</div><div class="cap">直播场次，奠基期人手不足下扛下</div></div>
+  </div>
+
+  <!-- 战役区 -->
+  <section>
+    <div class="eyebrow">两场硬仗</div>
+    <div class="sec-title">从0到1，是打出来的</div>
+    <div class="story">
+      <div class="eyebrow" style="margin-bottom:4px">硬仗一 · 公众号机会点</div>
+      <h3>所有人都说公众号在衰落，我看到了相反的东西</h3>
+      <p>线索量少——日十几二十条，但转化率很高。机会不在换渠道，而在放大线索口径和曝光。</p>
+      <p>当时主流判断是公众号生态弱化、非发力点。我坚持自己的判断，跨部门对接、争取资源，把这套事扛了下来。</p>
+      <p class="arrow"><b>动作：</b>把公众号引流做成体系——内容引流、菜单栏引流、自动回复引流；广告位素材与落地页全面加钩子埋点、二维码露出。</p>
+      <p class="arrow"><b>结果：</b>公众号单月流水从几万 → 月度80万。（2026年回落至22万，与市场环境、账号增长有关。）</p>
+    </div>
+    <div class="story">
+      <div class="eyebrow" style="margin-bottom:4px">硬仗二 · 直播奠基</div>
+      <h3>一周1场拉到7场，人手不够，我陪大家一起扛</h3>
+      <p>2022年起步期，团队动力最弱。我的做法：给到明确的下一步动作，陪伙伴一起做下去，而不是让小伙伴自己扛。</p>
+      <p class="arrow"><b>动作：</b>提效率、一起加班扛压，快速验证直播模型能否落地。</p>
+      <p class="arrow"><b>结果：</b>直播引流线路验证成功，拿结果跟领导争取到加人——这是朝阳计划从0到1的关键奠基阶段。</p>
+    </div>
+  </section>
+
+  <!-- 能力区 -->
+  <section>
+    <div class="eyebrow">我能做什么</div>
+    <div class="sec-title">三件大多数人做不好的事</div>
+    <div class="caps">
+      <div class="cap-pill">从数据堆里识别可放大的机会点</div>
+      <div class="cap-pill">有限资源聚焦80%核心板块</div>
+      <div class="cap-pill">陪伴式带队：人心不稳时稳住局面</div>
+    </div>
+  </section>
+
+  <!-- 适配区 -->
+  <section>
+    <div class="eyebrow">谁会需要我</div>
+    <div class="sec-title">这些时刻，想到我</div>
+    <div class="scene"><div class="dot"></div><p>新业务开拓期，需要一个把项目从0到1盘活的人</p></div>
+    <div class="scene"><div class="dot"></div><p>增长停滞，老板在找第二曲线</p></div>
+    <div class="scene"><div class="dot"></div><p>教育/心理/知识付费业务，成熟期要精细化运营</p></div>
+    <div class="scene"><div class="dot"></div><p>资源有限、人心不稳，需要有人把局面稳住</p></div>
+  </section>
+
+  <!-- 口碑区 -->
+  <section>
+    <div class="eyebrow">别人怎么说</div>
+    <div class="quote">"很有冲劲 · 不忘初心 · 照顾大家"
+      <span>口碑原话与出处待钉，展示前需征得本人同意</span>
+    </div>
+  </section>
+
+  <!-- 经历线 -->
+  <section class="tight">
+    <div class="eyebrow">走过的路</div>
+    <div class="sec-title">经历时间线</div>
+    <div class="tl">
+      <div class="tl-item"><div class="when">2022.10 — 至今</div><div class="what">壹心理 · 朝阳计划运营主管：从0到1统筹搭建，渠道扩展至App推广、私域、直播、小红书投放</div></div>
+      <div class="tl-item"><div class="when">此前经历<span class="tbd">待补充</span></div><div class="what">教育背景与前段职业路径，采访未覆盖，上站前补充钉死</div></div>
+    </div>
+  </section>
+</main>
+
+<!-- 联系区 -->
+<div class="contact" id="contact">
+  <div class="eyebrow" style="text-align:center">下一步</div>
+  <div class="sec-title" style="text-align:center">觉得对路？来找我聊</div>
+  <a class="contact-btn" href="#">加我微信<span class="tbd">微信号待提供</span></a>
+  <a class="contact-btn ghost" href="#">打我电话<span class="tbd">手机号待提供</span></a>
+</div>
+
+<footer>
+  本页为结构线框草案：文案以《网站定位卡》为准，上站前逐条钉死；涉及壹心理经营数据与他人评价的对外展示，须事先获得公司及相关人员同意。<br>
+  右下角可切换五套配色气质：A 天空蓝+粉（活泼）· B 雾蓝+湛蓝（沉稳）· C 暖阳橙（亲和）· D 森林绿（成长）· E 静谧紫（专业）。
+</footer>
+
+<div class="theme-toggle">
+  <button id="btnA" class="on" onclick="setTheme('A')">A 蓝粉</button>
+  <button id="btnB" onclick="setTheme('B')">B 雾蓝</button>
+  <button id="btnC" onclick="setTheme('C')">C 暖橙</button>
+  <button id="btnD" onclick="setTheme('D')">D 森绿</button>
+  <button id="btnE" onclick="setTheme('E')">E 静紫</button>
+</div>
+
+<script>
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    document.body.setAttribute('data-theme',t);
+    ['A','B','C','D','E'].forEach(function(k){
+      document.getElementById('btn'+k).className = (t===k?'on':'');
+    });
+  }
+  setTheme('A');
+</script>
+</body>
+</html>
