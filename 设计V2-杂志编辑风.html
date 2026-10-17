@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>小九 · 个人主页</title>
+<style>
+  :root{
+    --paper:#FAF7F1; --ink:#1C1917; --soft:#6B655C;
+    --needle:#A63A2B; --hair:#E5DFD3; --card:#FFFFFF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"PingFang SC","Songti SC","Noto Serif SC","Microsoft YaHei",serif;
+    background:var(--paper);color:var(--ink);line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 26px}
+  .tbd{
+    display:inline-block;font-size:11px;line-height:1;color:#8A5B00;
+    background:#FFF3D6;border:1px solid #E8C979;border-radius:4px;
+    padding:3px 6px;margin-left:6px;vertical-align:2px;white-space:nowrap;
+  }
+  /* 阅读进度线 */
+  #progress{
+    position:fixed;top:0;left:0;height:2px;width:0%;z-index:30;
+    background:var(--needle);transition:width .12s linear;
+  }
+  /* 顶栏 */
+  header.top{
+    position:sticky;top:0;z-index:20;background:rgba(250,247,241,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--hair);padding:18px 0 14px;
+  }
+  header.top .wrap{display:flex;justify-content:space-between;align-items:baseline}
+  .brand{font-size:15px;font-weight:700;letter-spacing:.35em}
+  .top-cta{font-size:12px;color:var(--needle);letter-spacing:.2em;text-decoration:none}
+  /* Hero：载入时分层浮现 */
+  .hero{padding:64px 0 56px;border-bottom:1px solid var(--hair)}
+  .hero .kicker{display:flex;align-items:center;gap:16px;margin-bottom:32px;opacity:0;animation:up .8s .1s ease forwards}
+  .hero .kicker img{
+    width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:50% 22%;
+    border:1px solid var(--hair);
+  }
+  .hero .kicker .who{font-size:13px;color:var(--soft);line-height:1.6}
+  .hero .kicker .who b{display:block;color:var(--ink);font-size:15px;letter-spacing:.12em}
+  .hero h1{font-size:35px;line-height:1.5;font-weight:700;letter-spacing:.04em;opacity:0;animation:up .8s .25s ease forwards}
+  .hero h1 em{font-style:normal;color:var(--needle)}
+  .hero .sub{margin-top:20px;font-size:14px;color:var(--soft);opacity:0;animation:up .8s .4s ease forwards}
+  @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  /* 章节头 */
+  section{padding:54px 0 10px}
+  .sec-head{
+    display:flex;align-items:baseline;gap:16px;
+    border-top:1px solid var(--hair);padding-top:18px;margin-bottom:30px;
+  }
+  .sec-head .no{font-size:14px;color:var(--needle);letter-spacing:.15em;font-weight:700}
+  .sec-head h2{font-size:22px;font-weight:700;letter-spacing:.06em}
+  /* 滚动浮现 */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .75s ease,transform .75s ease}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+  .reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+  /* 数字排 */
+  .figures .fig{
+    display:flex;align-items:baseline;justify-content:space-between;
+    padding:16px 0;border-bottom:1px solid var(--hair);
+  }
+  .figures .fig:last-child{border-bottom:0}
+  .fig .num{font-size:32px;font-weight:700;letter-spacing:.02em;line-height:1.2}
+  .fig .num small{font-size:15px;color:var(--soft);font-weight:400}
+  .fig .cap{font-size:12.5px;color:var(--soft);text-align:right;max-width:52%;line-height:1.7}
+  /* 全链路 */
+  .chain{background:var(--card);border:1px solid var(--hair);border-radius:3px;padding:8px 24px}
+  .chain .step{display:flex;gap:22px;align-items:flex-start;padding:22px 0;border-bottom:1px solid var(--hair)}
+  .chain .step:last-of-type{border-bottom:0}
+  .chain .stage{
+    flex:0 0 auto;writing-mode:vertical-rl;
+    font-size:16px;font-weight:700;letter-spacing:.3em;color:var(--needle);
+    border:1px solid var(--hair);border-radius:2px;padding:14px 9px;
+    background:var(--paper);line-height:1;
+    transition:background .4s,color .4s;
+  }
+  .chain .step.in .stage{background:var(--needle);color:var(--paper);border-color:var(--needle)}
+  .chain .stagebody{padding-top:2px}
+  .chain .stagebody .st{font-size:15.5px;font-weight:700;margin-bottom:6px}
+  .chain .stagebody p{font-size:13.5px;color:var(--soft);line-height:1.8;max-width:40ch}
+  .chain .endpoint{margin:4px 0 20px;text-align:center;border-top:1px solid var(--hair);padding-top:18px}
+  .chain .endpoint .cap{font-size:12px;color:var(--soft);letter-spacing:.18em;margin-bottom:6px}
+  .chain .endpoint .val{font-size:27px;font-weight:700;color:var(--needle);letter-spacing:.04em}
+  /* 硬仗 */
+  .battle{margin-bottom:46px}
+  .battle .tag{font-size:12px;color:var(--needle);letter-spacing:.25em;margin-bottom:10px}
+  .battle h3{font-size:21px;line-height:1.6;font-weight:700;margin-bottom:14px}
+  .battle p{font-size:14.5px;color:var(--soft);margin-bottom:10px;max-width:56ch}
+  .battle .verdict{
+    margin-top:16px;padding-left:16px;border-left:2px solid var(--needle);
+    font-size:14.5px;color:var(--ink);font-weight:600;
+  }
+  .battle .verdict small{display:block;color:var(--soft);font-weight:400;margin-top:4px}
+  /* 所长 */
+  .ability{list-style:none}
+  .ability li{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair);font-size:15px}
+  .ability li:last-child{border-bottom:0}
+  .ability li .m{color:var(--needle);font-weight:700;font-size:13px;letter-spacing:.1em;padding-top:2px}
+  /* 场景 */
+  .scene{list-style:none}
+  .scene li{padding:13px 0;border-bottom:1px solid var(--hair);font-size:15px}
+  .scene li:last-child{border-bottom:0}
+  /* 时间线 */
+  .tl{border-left:1px solid var(--hair);padding-left:22px}
+  .tl .item{position:relative;padding-bottom:26px}
+  .tl .item:last-child{padding-bottom:6px}
+  .tl .item::before{
+    content:"";position:absolute;left:-25.5px;top:10px;width:7px;height:7px;
+    background:var(--paper);border:1.5px solid var(--needle);border-radius:1px;transform:rotate(45deg);
+  }
+  .tl .when{font-size:12px;color:var(--needle);letter-spacing:.12em;font-weight:700}
+  .tl .what{font-size:14.5px;color:var(--ink);margin-top:3px}
+  .tl .what small{color:var(--soft)}
+  /* 联络 */
+  .contact{border-top:1px solid var(--hair);margin-top:20px;padding:60px 0 20px;text-align:center}
+  .contact h2{font-size:27px;font-weight:700;letter-spacing:.08em}
+  .contact p{font-size:13.5px;color:var(--soft);margin-top:10px}
+  .btn{
+    display:inline-block;margin-top:28px;text-decoration:none;
+    font-size:15px;font-weight:700;letter-spacing:.22em;
+    padding:15px 44px;border:1px solid var(--ink);color:var(--ink);
+    transition:transform .18s ease,background .3s,color .3s;
+  }
+  .btn:active{transform:scale(.96)}
+  .btn.fill{background:var(--ink);color:var(--paper);margin-right:12px}
+  .btn.fill:active{background:#000}
+  /* 回卷首 */
+  #totop{
+    position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:20;
+    width:44px;height:44px;border-radius:50%;
+    background:var(--paper);border:1px solid var(--hair);color:var(--ink);
+    font-size:15px;box-shadow:0 4px 16px rgba(28,25,23,.12);
+    opacity:0;pointer-events:none;transform:translateY(10px);
+    transition:opacity .3s,transform .3s;
+  }
+  #totop.show{opacity:1;pointer-events:auto;transform:none}
+  #totop:active{transform:scale(.92)}
+  footer{padding:44px 0 calc(56px + env(safe-area-inset-bottom))}
+  footer p{font-size:11.5px;color:var(--soft);line-height:1.9;max-width:56ch}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">小 九</div>
+    <a class="top-cta" href="#contact">联 络</a>
+  </div>
+</header>
+
+<div class="hero wrap">
+  <div class="kicker">
+    <img src="assets/avatar-web.jpg" alt="小九">
+    <div class="who"><b>小九 · 壹心理朝阳计划</b>运营主管 · 心理咨询师培养项目统筹推进</div>
+  </div>
+  <h1>陪着队伍，<br>把事<em>扛成</em>。</h1>
+  <div class="sub">朝阳计划从0到1，我扛了三年<span class="tbd">灵魂句三选一待确认</span></div>
+</div>
+
+<main class="wrap">
+  <section>
+    <div class="sec-head reveal"><span class="no">壹</span><h2>战绩</h2></div>
+    <div class="figures">
+      <div class="fig reveal"><div class="num"><span data-count="3200">3200</span><small>万</small></div><div class="cap">2025年全年流水营收<br><span class="tbd">需公司披露确认</span></div></div>
+      <div class="fig reveal d1"><div class="num">2022<small>.10</small></div><div class="cap">朝阳计划起步，从0到1</div></div>
+      <div class="fig reveal d2"><div class="num">80<small>万/月</small></div><div class="cap">公众号单月流水，自几万起步<br><span class="tbd">峰值/月均口径待钉</span></div></div>
+      <div class="fig reveal d3"><div class="num">7<small>场/周</small></div><div class="cap">直播场次，自1场/周拉起</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head reveal"><span class="no">贰</span><h2>业务全链路</h2></div>
+    <div class="chain">
+      <div class="step reveal">
+        <div class="stage">曝光</div>
+        <div class="stagebody">
+          <div class="st">五路并进的获客布局</div>
+          <p>直播、公众号、小红书投放、App推广、私域——自直播单点起，逐步扩成五路并进。</p>
+        </div>
+      </div>
+      <div class="step reveal d1">
+        <div class="stage">线索</div>
+        <div class="stagebody">
+          <div class="st">把引流做成体系</div>
+          <p>内容、菜单栏、自动回复三线引流；广告位素材与落地页全面埋设钩子与二维码——线索口径，从日十几二十条放大。</p>
+        </div>
+      </div>
+      <div class="step reveal d2">
+        <div class="stage">成交</div>
+        <div class="stagebody">
+          <div class="st">放大被验证过的转化</div>
+          <p>线索少而转化率高——先验证质量，再放大口径与曝光，增长才立得住。</p>
+        </div>
+      </div>
+      <div class="step reveal d3">
+        <div class="stage">交付</div>
+        <div class="stagebody">
+          <div class="st">培养项目的统筹推进</div>
+          <p>课程、带练与学员支持的完整链路<span class="tbd">待口述补充</span></p>
+        </div>
+      </div>
+      <div class="step reveal d4">
+        <div class="stage">口碑</div>
+        <div class="stagebody">
+          <div class="st">口碑与转介绍</div>
+          <p>口碑外化、转介绍机制<span class="tbd">待口述补充</span></p>
+        </div>
+      </div>
+      <div class="endpoint reveal">
+        <div class="cap">链 路 终 点 · 全 年 流 水</div>
+        <div class="val"><span data-count="3200">3200</span>万 <small style="font-size:12px;color:var(--soft);font-weight:400">2025年<span class="tbd" style="margin-left:6px">需公司披露确认</span></small></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head reveal"><span class="no">叁</span><h2>两场硬仗</h2></div>
+    <div class="battle reveal">
+      <div class="tag">硬 仗 一 · 公 众 号</div>
+      <h3>所有人看见生态衰落，<br>我看见转化率。</h3>
+      <p>线索不多——日均十几二十条，但转化率很高。机会不在换渠道，而在放大线索口径与曝光；而当时的主流判断恰恰相反：公众号生态弱化，非发力点。</p>
+      <p>我坚持自己的判断，跨部门对接、争取资源，把这件事扛了下来：内容引流、菜单栏引流、自动回复引流连成体系；广告位素材与落地页，全面加钩子埋点、二维码露出。</p>
+      <div class="verdict">公众号单月流水：几万 → 月度80万<small>2026年回落至22万，与市场环境、账号增长有关——如实呈现</small></div>
+    </div>
+    <div class="battle reveal d1">
+      <div class="tag">硬 仗 二 · 直 播</div>
+      <h3>一周七场直播，<br>人手没有变多。</h3>
+      <p>2022年起步期，直播从周1场拉到周7场，团队动力最弱。我的做法只有两条：给出明确的下一步动作；陪伙伴一起做下去——不是让小伙伴自己扛。提效率、扛压力、快速验证直播模型。</p>
+      <div class="verdict">直播引流线路验证成功，以结果争取到增员<small>朝阳计划从0到1的奠基阶段</small></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head reveal"><span class="no">肆</span><h2>所长</h2></div>
+    <ul class="ability reveal">
+      <li><span class="m">其一</span>在数据里找到那个值得放大的机会点</li>
+      <li><span class="m">其二</span>有限资源，聚焦80%核心板块，以机会点放大产出</li>
+      <li><span class="m">其三</span>带队：给明确的下一步，然后陪人走完</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head reveal"><span class="no">伍</span><h2>谁会需要我</h2></div>
+    <ul class="scene reveal">
+      <li>新业务开拓期，需要一个从0到1盘活项目的人</li>
+      <li>增长停滞，老板在找第二曲线</li>
+      <li>教育、心理、知识付费的成熟期，需要精细化运营</li>
+      <li>资源有限、人心不稳，需要有人把局面稳住</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head reveal"><span class="no">陆</span><h2>来路</h2></div>
+    <div class="tl">
+      <div class="item reveal"><div class="when">2022.10 — 至今</div><div class="what">壹心理 · 朝阳计划运营主管<br><small>从0到1统筹搭建；渠道扩至App推广、私域、直播、小红书投放</small></div></div>
+      <div class="item reveal d1"><div class="when">此前经历</div><div class="what">教育背景与前段职业路径<br><small><span class="tbd">待补充</span></small></div></div>
+    </div>
+  </section>
+
+  <div class="contact reveal" id="contact">
+    <h2>觉得对路，来聊聊</h2>
+    <p>微信与手机号<span class="tbd">待提供</span></p>
+    <a class="btn fill" href="#">加我微信</a><a class="btn" href="#">打我电话</a>
+  </div>
+</main>
+
+<footer class="wrap">
+  <p>文案以《网站定位卡》为准，上站前逐条钉死；涉及壹心理经营数据的对外展示，须事先获得公司同意。</p>
+</footer>
+
+<button id="totop" aria-label="回到卷首">↑</button>
+
+<script>
+  // 滚动浮现
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); }
+    });
+  },{threshold:.18});
+  document.querySelectorAll('.reveal,.chain .step').forEach(function(el){ io.observe(el); });
+
+  // 数字缓升
+  function countup(el){
+    var target = parseInt(el.getAttribute('data-count'),10);
+    var start = null, dur = 1100;
+    function tick(ts){
+      if(!start) start = ts;
+      var p = Math.min((ts-start)/dur,1);
+      var eased = 1 - Math.pow(1-p,3);
+      el.textContent = Math.round(target*eased);
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  var cio = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ countup(e.target); cio.unobserve(e.target); }
+    });
+  },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(function(el){ cio.observe(el); });
+
+  // 阅读进度线 + 回卷首按钮
+  var bar = document.getElementById('progress'), top = document.getElementById('totop');
+  window.addEventListener('scroll', function(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max>0 ? (h.scrollTop/max*100) : 0) + '%';
+    if(h.scrollTop > 600){ top.classList.add('show'); } else { top.classList.remove('show'); }
+  }, {passive:true});
+  top.addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+</script>
+
+</body>
+</html>
